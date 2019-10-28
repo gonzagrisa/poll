@@ -185,5 +185,43 @@ func TestCreatePoll(t *testing.T) {
 }
 
 func TestGetPoll(t *testing.T) {
-
+	cases := []struct {
+		TestName string
+		Poll     domain.Poll
+		Expected domain.Poll
+	}{
+		{
+			TestName: "Complete Poll",
+			Poll: domain.Poll{
+				Question: "Test Question",
+				Answers: map[string]string{
+					"1": "test",
+					"2": "test 2",
+				},
+			},
+			Expected: domain.Poll{
+				Question: "Test Question",
+				Answers: map[string]string{
+					"1": "test",
+					"2": "test 2",
+				},
+			},
+		},
+		{
+			TestName: "No Poll",
+			Poll:     domain.Poll{},
+			Expected: domain.Poll{},
+		},
+	}
+	aux := savedPoll
+	for _, c := range cases {
+		t.Run(c.TestName, func(t *testing.T) {
+			savedPoll = c.Expected
+			result, _ := GetPoll()
+			if !c.Expected.Equals(result) {
+				t.Fail()
+			}
+		})
+	}
+	savedPoll = aux
 }
